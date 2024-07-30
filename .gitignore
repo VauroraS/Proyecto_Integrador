@@ -1,0 +1,40 @@
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# npm package lock file
+package-lock.json
+yarn.lock
+
+# Jest coverage
+coverage/
+
+# React Native
+.expo/
+.expo-shared/
