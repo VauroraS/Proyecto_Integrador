@@ -11,11 +11,13 @@ const SongList = () => {
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        // Ajusta los parámetros según la API
+        console.log(`Fetching page: ${currentPage}`); // Verificar la página actual
         const response = await api.get(`/songs/?page=${currentPage}&page_size=${songsPerPage}`);
-        if (response.data.results) {
-          setSongs(response.data.results); // Asegúrate de que `results` contenga las canciones actuales
-          setTotalPages(Math.ceil(response.data.total / songsPerPage)); // Ajusta según cómo se maneja el total en la respuesta
+        console.log('API Response:', response.data); // Verificar la respuesta de la API
+
+        if (response.data && response.data.results) {
+          setSongs(response.data.results);
+          setTotalPages(Math.ceil(response.data.count / songsPerPage)); // Calcular el número total de páginas
         }
       } catch (error) {
         console.error('Error fetching songs:', error);
@@ -27,13 +29,19 @@ const SongList = () => {
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage(prevPage => {
+        console.log(`Navigating to next page: ${prevPage + 1}`); // Verificar la página siguiente
+        return prevPage + 1;
+      });
     }
   };
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage(prevPage => {
+        console.log(`Navigating to previous page: ${prevPage - 1}`); // Verificar la página anterior
+        return prevPage - 1;
+      });
     }
   };
 
@@ -73,3 +81,4 @@ const SongList = () => {
 };
 
 export default SongList;
+

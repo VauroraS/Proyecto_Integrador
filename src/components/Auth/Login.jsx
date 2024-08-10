@@ -18,7 +18,7 @@ const Login = () => {
       // Suponiendo que la respuesta contiene un token
       const { token } = response.data;
       localStorage.setItem('token', token); 
-        window.location.href = '/Home';
+        //window.location.href = '/Home';
     } catch (error) {
       setError('Credenciales inválidas o error en la solicitud');
       console.error('Error durante el inicio de sesión:', error);
