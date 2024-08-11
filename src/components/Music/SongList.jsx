@@ -12,7 +12,7 @@ const SongList = () => {
     const fetchSongs = async () => {
       try {
         console.log(`Fetching page: ${currentPage}`); // Verificar la página actual
-        const response = await api.get(`/songs/?page=${currentPage}&page_size=${songsPerPage}`);
+        const response = await api.get(`/harmonyhub/songs/?page=${currentPage}&page_size=${songsPerPage}`);
         console.log('API Response:', response.data); // Verificar la respuesta de la API
 
         if (response.data && response.data.results) {
