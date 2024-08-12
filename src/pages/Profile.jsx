@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import ProfileImageModal from '../components/ProfileImageModal';
-
+//
 function Profile() {
     const { user, logout } = useAuth();
     const [editMode, setEditMode] = useState(false);
