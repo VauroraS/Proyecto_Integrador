@@ -64,14 +64,14 @@ const SongList = () => {
         <button
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          className="px-4 py-2 mx-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+          className="px-4 py-2 mx-2 bg-[#5257cd] text-black rounded-lg hover:bg-[#034f74] disabled:opacity-50"
         >
           Previous
         </button>
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+          className="px-4 py-2 mx-2 bg-[#5257cd] text-black rounded-lg hover:bg-[#034f74] disabled:opacity-50"
         >
           Next
         </button>
