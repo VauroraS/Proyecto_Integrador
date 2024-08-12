@@ -10,7 +10,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <Link className="navbar-brand navbar-logo flex items-center" to="/">
           <img
-            src="/src/assets/pez.png"
+            src="./src/assets/pez.png"
             alt="Logo"
             className="w-14 h-14 md:w-22 md:h-22 lg:w-26 lg:h-26"
           />
