@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import ProfileImageModal from '../components/ProfileImageModal';
 
 function Profile() {
-    const { user, logout } = useAuth(); // Desestructur user y logout desde el contexto de autenticación
+    const { user, logout } = useAuth();
     const [editMode, setEditMode] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditingState, setIsEditingState] = useState(false);
@@ -24,15 +24,15 @@ function Profile() {
         const fetchProfile = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}users/profiles/profile_data/`,
+                    `${import.meta.env.VITE_API_BASE_URL}/users/profiles/profile_data/`,
                     { headers: { Authorization: `Token ${user.token}` } }
                 );
                 setUserData(response.data);
             } catch (err) {
                 setError('Error al cargar el perfil');
                 if (err.response?.status === 401) {
-                    logout(); // Si el error es 401, se cierra sesión
-                    window.location.href = '/login'; // Redirige al login
+                    logout();
+                    window.location.href = '/login';
                 }
             } finally {
                 setLoading(false);
@@ -42,7 +42,7 @@ function Profile() {
         const fetchUserStates = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}users/user-states/`,
+                    `${import.meta.env.VITE_API_BASE_URL}/users/user-states/`,
                     { headers: { Authorization: `Token ${user.token}` } }
                 );
                 setUserStates(response.data.results || []);
@@ -61,10 +61,10 @@ function Profile() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!userData || !user.token) return; // Asegurarse de que userData y user.token estén definidos
+        if (!userData || !user.token) return;
         try {
             await axios.patch(
-                `${import.meta.env.VITE_API_BASE_URL}users/profiles/${userData.user__id}/`,
+                `${import.meta.env.VITE_API_BASE_URL}/users/profiles/${userData.user__id}/`,
                 {
                     first_name: firstNameRef.current.value,
                     last_name: lastNameRef.current.value,
@@ -80,9 +80,8 @@ function Profile() {
                 }
             );
             setEditMode(false);
-            // Refrescar el perfil
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}users/profiles/profile_data/`,
+                `${import.meta.env.VITE_API_BASE_URL}/users/profiles/profile_data/`,
                 { headers: { Authorization: `Token ${user.token}` } }
             );
             setUserData(response.data);
@@ -93,10 +92,10 @@ function Profile() {
 
     const handleStateChange = async (event) => {
         const newUserStateID = event.target.value;
-        if (!userData || !user.token) return; // Asegurarse de que userData y user.token estén definidos
+        if (!userData || !user.token) return;
         try {
             await axios.patch(
-                `${import.meta.env.VITE_API_BASE_URL}users/profiles/${userData.user__id}/`,
+                `${import.meta.env.VITE_API_BASE_URL}/users/profiles/${userData.user__id}/`,
                 { state: newUserStateID },
                 {
                     headers: {
@@ -112,155 +111,163 @@ function Profile() {
         }
     };
 
-    if (loading) return <p>Cargando perfil...</p>;
-    if (error) return <p>{error}</p>;
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+
+    const handleImageUpload = async (formData) => {
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_API_BASE_URL}/users/profiles/${userData.user__id}/`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Token ${user.token}`,
+                    },
+                }
+            );
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/users/profiles/profile_data/`,
+                { headers: { Authorization: `Token ${user.token}` } }
+            );
+            setUserData(response.data);
+        } catch (err) {
+            setError('Error al actualizar la imagen de perfil');
+        }
+    };
+
+    if (loading) return <div>Cargando...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
-        <div className="max-w-4xl mx-auto p-4 bg-white rounded shadow-md">
-            {userData ? (
-                <>
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                        <div className="flex items-center space-x-4">
-                            <figure className="w-24 h-24">
-                                <img
-                                    src={
-                                        `${import.meta.env.VITE_API_BASE_URL}${userData.image}` ||
-                                        "https://via.placeholder.com/96"
-                                    }
-                                    alt="Profile"
-                                    className="w-full h-full rounded-full cursor-pointer"
-                                    onClick={() => setIsModalOpen(true)}
-                                />
-                            </figure>
-                            <div className="flex-1">
-                                {editMode ? (
-                                    <div className="flex space-x-2 mb-2">
-                                        <input
-                                            type="text"
-                                            className="border p-2 rounded"
-                                            ref={firstNameRef}
-                                            defaultValue={userData.first_name}
-                                        />
-                                        <input
-                                            type="text"
-                                            className="border p-2 rounded"
-                                            ref={lastNameRef}
-                                            defaultValue={userData.last_name}
-                                        />
-                                    </div>
-                                ) : (
-                                    <p className="text-2xl font-bold">
-                                        {userData.first_name} {userData.last_name}
-                                    </p>
-                                )}
-                                {isEditingState ? (
-                                    <div className="mt-2">
-                                        <select
-                                            className="border p-2 rounded"
-                                            ref={userStateRef}
-                                            value={userData.state?.id || ''}
-                                            onChange={handleStateChange}
-                                        >
-                                            {userStates.map(state => (
-                                                <option key={state.id} value={state.id}>
-                                                    {state.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center mt-2 cursor-pointer" onClick={() => setIsEditingState(true)}>
-                                        <img
-                                            src={`${import.meta.env.VITE_API_BASE_URL}${userData.state?.icon}`}
-                                            alt="State icon"
-                                            className="w-6 h-6 mr-2 rounded-full"
-                                        />
-                                        <span>{userData.state?.name}</span>
-                                    </div>
-                                )}
-                            </div>
-                            <button
-                                type="button"
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                                onClick={handleEditMode}
+        <div className="p-6 bg-white shadow-md rounded-md">
+            <h1 className="text-2xl font-semibold mb-4">Perfil</h1>
+            {userData && (
+                <div>
+                    <div className="flex items-center mb-4">
+                        <img
+                            src={userData.profile_image || 'default-profile.png'}
+                            alt="Profile"
+                            className="w-24 h-24 rounded-full mr-4"
+                        />
+                        <button
+                            onClick={handleOpenModal}
+                            className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1]"
+                        >
+                            Cambiar Imagen
+                        </button>
+                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">Nombre:</label>
+                            <input
+                                type="text"
+                                id="first_name"
+                                ref={firstNameRef}
+                                defaultValue={userData.first_name}
+                                disabled={!editMode}
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Apellido:</label>
+                            <input
+                                type="text"
+                                id="last_name"
+                                ref={lastNameRef}
+                                defaultValue={userData.last_name}
+                                disabled={!editMode}
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo electrónico:</label>
+                            <input
+                                type="email"
+                                id="email"
+                                ref={emailRef}
+                                defaultValue={userData.email}
+                                disabled={!editMode}
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Fecha de nacimiento:</label>
+                            <input
+                                type="date"
+                                id="dob"
+                                ref={dobRef}
+                                defaultValue={userData.dob}
+                                disabled={!editMode}
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Biografía:</label>
+                            <textarea
+                                id="bio"
+                                ref={bioRef}
+                                defaultValue={userData.bio}
+                                disabled={!editMode}
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="state" className="block text-sm font-medium text-gray-700">Estado:</label>
+                            <select
+                                id="state"
+                                ref={userStateRef}
+                                value={userData.state?.id || ''}
+                                onChange={handleStateChange}
+                                disabled={!isEditingState}
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             >
-                                {editMode ? 'Guardar' : 'Editar'}
+                                {userStates.map(state => (
+                                    <option key={state.id} value={state.id}>{state.name}</option>
+                                ))}
+                            </select>
+                            <button
+                                onClick={() => setIsEditingState(!isEditingState)}
+                                className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1] mt-2"
+                            >
+                                {isEditingState ? 'Guardar' : 'Editar Estado'}
                             </button>
                         </div>
-                        {editMode && (
-                            <div>
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium mb-1">Email:</label>
-                                    <input
-                                        type="email"
-                                        className="border p-2 rounded w-full"
-                                        ref={emailRef}
-                                        defaultValue={userData.email}
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium mb-1">Fecha de Nacimiento:</label>
-                                    <input
-                                        type="date"
-                                        className="border p-2 rounded w-full"
-                                        ref={dobRef}
-                                        defaultValue={userData.dob}
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium mb-1">Biografía:</label>
-                                    <textarea
-                                        className="border p-2 rounded w-full"
-                                        ref={bioRef}
-                                        defaultValue={userData.bio || 'No disponible'}
-                                    />
-                                </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={handleEditMode}
+                                className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1] mr-2"
+                            >
+                                {editMode ? 'Cancelar' : 'Editar'}
+                            </button>
+                            {editMode && (
                                 <button
                                     type="submit"
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-400"
                                 >
                                     Guardar Cambios
                                 </button>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </form>
-                    <ProfileImageModal
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        userId={userData.user__id}
-                        onUpload={{
-                            updateProfileImage: async (file) => {
-                                try {
-                                    const formData = new FormData();
-                                    formData.append('image', file);
-                                    await axios.patch(
-                                        `${import.meta.env.VITE_API_BASE_URL}users/profiles/${userData.user__id}/`,
-                                        formData,
-                                        {
-                                            headers: {
-                                                'Content-Type': 'multipart/form-data',
-                                                Authorization: `Token ${user.token}`,
-                                            },
-                                        }
-                                    );
-                                    const response = await axios.get(
-                                        `${import.meta.env.VITE_API_BASE_URL}users/profiles/profile_data/`,
-                                        { headers: { Authorization: `Token ${user.token}` } }
-                                    );
-                                    setUserData(response.data);
-                                } catch (err) {
-                                    setError('Error al actualizar la imagen de perfil');
-                                }
-                            },
-                            isLoadingUpdate: false,
-                        }}
-                    />
-                </>
-            ) : (
-                <p>No se pudo cargar la información del perfil.</p>
+                    <button
+                        onClick={logout}
+                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-400"
+                    >
+                        Cerrar sesión
+                    </button>
+                </div>
             )}
+            <ProfileImageModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                userId={user.userId}
+                onUpload={{ updateProfileImage: handleImageUpload }}
+            />
         </div>
     );
 }
 
 export default Profile;
+

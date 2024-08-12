@@ -16,8 +16,13 @@ function ProfileImageModal({ isOpen, onClose, userId, onUpload }) {
             const formData = new FormData();
             formData.append('image', selectedImage);
 
-            await onUpload.updateProfileImage(formData);
-            onClose();
+            try {
+                await onUpload.updateProfileImage(formData);
+            } catch (error) {
+                console.error('Error al subir la imagen:', error);
+            } finally {
+                onClose();
+            }
         }
     };
 
@@ -25,16 +30,21 @@ function ProfileImageModal({ isOpen, onClose, userId, onUpload }) {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded shadow-md w-80">
                 <h2 className="text-xl font-semibold mb-4">Actualizar Imagen de Perfil</h2>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="mb-4"
+                />
                 <button
                     onClick={handleUpload}
-                    className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                    className="bg-[#5257cd] text-white px-4 py-2 rounded mr-2"
                 >
                     {onUpload.isLoadingUpdate ? 'Cargando...' : 'Subir Imagen'}
                 </button>
                 <button
                     onClick={onClose}
-                    className="bg-gray-500 text-white px-4 py-2 rounded mt-4 ml-2"
+                    className="bg-gray-500 text-white px-4 py-2 rounded"
                 >
                     Cancelar
                 </button>
