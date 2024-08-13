@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './components/Auth/Login';
 import NotFound from './pages/NotFound';
+import AlbumsPage from './components/Music/AlbumPage';
 
 const App = () => {
   return (
@@ -13,8 +14,9 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/album" element={<AlbumsPage/>} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/NotFound" element={<NotFound />} />
+          <Route path="/notfound" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </Router>
