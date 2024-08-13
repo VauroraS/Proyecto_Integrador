@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './components/Auth/Login';
+import NotFound from './pages/NotFound';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/NotFound" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </Router>

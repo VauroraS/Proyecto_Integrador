@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import ProfileImageModal from '../components/ProfileImageModal';
+import defaultProfileImage from '../assets/default-profile.png'; // Importa la imagen
 //
 function Profile() {
     const { user, logout } = useAuth();
@@ -147,7 +148,7 @@ function Profile() {
                     <div>
                         <div className="flex items-center mb-4">
                             <img
-                                src={userData.profile_image || 'default-profile.png'}
+                                src={userData.profile_image || defaultProfileImage}
                                 alt="Profile"
                                 className="w-24 h-24 rounded-full mr-4"
                             />
