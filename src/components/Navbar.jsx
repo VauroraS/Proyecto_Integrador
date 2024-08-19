@@ -37,7 +37,6 @@ const Navbar = () => {
             </>
           ) : (
             <span className="text-red-500">
-              Para acceder a todo el contenido, debes iniciar sesión.
             </span>
           )}
           {user ? (
