@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import ProfileImageModal from '../components/ProfileImageModal';
 import defaultProfileImage from '../assets/default-profile.png'; // Importa la imagen
+import Navbar from '../components/Navbar';
 //
 function Profile() {
     const { user, logout } = useAuth();
@@ -141,132 +142,135 @@ function Profile() {
     if (error) return <div>{error}</div>;
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="p-6 bg-white shadow-md rounded-md max-w-lg w-full">
-                <h1 className="text-2xl font-semibold mb-4">Perfil</h1>
-                {userData && (
-                    <div>
-                        <div className="flex items-center mb-4">
-                            <img
-                                src={userData.profile_image || defaultProfileImage}
-                                alt="Profile"
-                                className="w-24 h-24 rounded-full mr-4"
-                            />
+        <div>
+            <Navbar />
+            <div className="flex justify-center p-4 items-center min-h-screen bg-gray-100">
+                <div className="p-6 bg-white shadow-md rounded-md max-w-lg w-full">
+                    <h1 className="text-2xl font-semibold mb-4">Perfil</h1>
+                    {userData && (
+                        <div>
+                            <div className="flex items-center mb-4">
+                                <img
+                                    src={userData.profile_image || defaultProfileImage}
+                                    alt="Profile"
+                                    className="w-24 h-24 rounded-full mr-4"
+                                />
+                                <button
+                                    onClick={handleOpenModal}
+                                    className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1]"
+                                >
+                                    Cambiar Imagen
+                                </button>
+                            </div>
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-4">
+                                    <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">Nombre:</label>
+                                    <input
+                                        type="text"
+                                        id="first_name"
+                                        ref={firstNameRef}
+                                        defaultValue={userData.first_name}
+                                        disabled={!editMode}
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Apellido:</label>
+                                    <input
+                                        type="text"
+                                        id="last_name"
+                                        ref={lastNameRef}
+                                        defaultValue={userData.last_name}
+                                        disabled={!editMode}
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo electrónico:</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        ref={emailRef}
+                                        defaultValue={userData.email}
+                                        disabled={!editMode}
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Fecha de nacimiento:</label>
+                                    <input
+                                        type="date"
+                                        id="dob"
+                                        ref={dobRef}
+                                        defaultValue={userData.dob}
+                                        disabled={!editMode}
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Biografía:</label>
+                                    <textarea
+                                        id="bio"
+                                        ref={bioRef}
+                                        defaultValue={userData.bio}
+                                        disabled={!editMode}
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="state" className="block text-sm font-medium text-gray-700">Estado:</label>
+                                    <select
+                                        id="state"
+                                        ref={userStateRef}
+                                        value={userData.state?.id || ''}
+                                        onChange={handleStateChange}
+                                        disabled={!isEditingState}
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    >
+                                        {userStates.map(state => (
+                                            <option key={state.id} value={state.id}>{state.name}</option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        onClick={() => setIsEditingState(!isEditingState)}
+                                        className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1] mt-2"
+                                    >
+                                        {isEditingState ? 'Guardar' : 'Editar Estado'}
+                                    </button>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={handleEditMode}
+                                        className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1] mr-2"
+                                    >
+                                        {editMode ? 'Cancelar' : 'Editar'}
+                                    </button>
+                                    {editMode && (
+                                        <button
+                                            type="submit"
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-400"
+                                        >
+                                            Guardar Cambios
+                                        </button>
+                                    )}
+                                </div>
+                            </form>
                             <button
-                                onClick={handleOpenModal}
-                                className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1]"
+                                onClick={logout}
+                                className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-400"
                             >
-                                Cambiar Imagen
+                                Cerrar sesión
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">Nombre:</label>
-                                <input
-                                    type="text"
-                                    id="first_name"
-                                    ref={firstNameRef}
-                                    defaultValue={userData.first_name}
-                                    disabled={!editMode}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Apellido:</label>
-                                <input
-                                    type="text"
-                                    id="last_name"
-                                    ref={lastNameRef}
-                                    defaultValue={userData.last_name}
-                                    disabled={!editMode}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo electrónico:</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    ref={emailRef}
-                                    defaultValue={userData.email}
-                                    disabled={!editMode}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Fecha de nacimiento:</label>
-                                <input
-                                    type="date"
-                                    id="dob"
-                                    ref={dobRef}
-                                    defaultValue={userData.dob}
-                                    disabled={!editMode}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Biografía:</label>
-                                <textarea
-                                    id="bio"
-                                    ref={bioRef}
-                                    defaultValue={userData.bio}
-                                    disabled={!editMode}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="state" className="block text-sm font-medium text-gray-700">Estado:</label>
-                                <select
-                                    id="state"
-                                    ref={userStateRef}
-                                    value={userData.state?.id || ''}
-                                    onChange={handleStateChange}
-                                    disabled={!isEditingState}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                >
-                                    {userStates.map(state => (
-                                        <option key={state.id} value={state.id}>{state.name}</option>
-                                    ))}
-                                </select>
-                                <button
-                                    onClick={() => setIsEditingState(!isEditingState)}
-                                    className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1] mt-2"
-                                >
-                                    {isEditingState ? 'Guardar' : 'Editar Estado'}
-                                </button>
-                            </div>
-                            <div className="flex justify-end">
-                                <button
-                                    type="button"
-                                    onClick={handleEditMode}
-                                    className="bg-[#5257cd] text-white px-4 py-2 rounded hover:bg-[#4349a1] mr-2"
-                                >
-                                    {editMode ? 'Cancelar' : 'Editar'}
-                                </button>
-                                {editMode && (
-                                    <button
-                                        type="submit"
-                                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-400"
-                                    >
-                                        Guardar Cambios
-                                    </button>
-                                )}
-                            </div>
-                        </form>
-                        <button
-                            onClick={logout}
-                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-400"
-                        >
-                            Cerrar sesión
-                        </button>
-                    </div>
-                )}
-                <ProfileImageModal
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                    userId={user.userId}
-                    onUpload={{ updateProfileImage: handleImageUpload }}
-                />
+                    )}
+                    <ProfileImageModal
+                        isOpen={isModalOpen}
+                        onClose={handleCloseModal}
+                        userId={user.userId}
+                        onUpload={{ updateProfileImage: handleImageUpload }}
+                    />
+                </div>
             </div>
         </div>
     );
