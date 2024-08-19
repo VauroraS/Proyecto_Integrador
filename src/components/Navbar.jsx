@@ -20,18 +20,26 @@ const Navbar = () => {
           </span>
         </Link>
         <div className="flex items-center space-x-4">
-          <Link 
-            to="/album" 
-            className="text-white hover:text-gray-300 transition duration-300"
-          >
-            Álbumes
-          </Link>
-          <Link 
-            to="/profile" 
-            className="text-white hover:text-gray-300 transition duration-300"
-          >
-            Perfil
-          </Link>
+          {user ? (
+            <>
+              <Link 
+                to="/album" 
+                className="text-white hover:text-gray-300 transition duration-300"
+              >
+                Álbumes
+              </Link>
+              <Link 
+                to="/profile" 
+                className="text-white hover:text-gray-300 transition duration-300"
+              >
+                Perfil
+              </Link>
+            </>
+          ) : (
+            <span className="text-red-500">
+              Para acceder a todo el contenido, debes iniciar sesión.
+            </span>
+          )}
           {user ? (
             <button 
               onClick={logout} 

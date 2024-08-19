@@ -9,12 +9,14 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
+    console.log('Inicializando estado con:', { token, userId }); // Debug
     return token && userId ? { token, userId } : null;
   });
 
   const navigate = useNavigate();
 
   const login = (token, userId) => {
+    console.log('Intentando iniciar sesión con:', { token, userId }); // Debug
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
     setUser({ token, userId });
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    console.log('Cerrando sesión'); // Debug
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     setUser(null);
