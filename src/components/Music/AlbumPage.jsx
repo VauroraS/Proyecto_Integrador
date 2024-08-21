@@ -35,7 +35,7 @@ function AlbumsPage() {
   };
 
   const handleAlbumClick = (albumId) => {
-    setSelectedAlbum(albumId);
+    setSelectedAlbum(albumId); // Establecer el álbum seleccionado
   };
 
   const handleInputChange = (e) => {
@@ -60,7 +60,7 @@ function AlbumsPage() {
 
     try {
       const { title, year, artist } = newAlbum;
-      
+
       // Verifica que todos los campos requeridos estén presentes y en el formato correcto
       if (!title || isNaN(parseInt(artist))) {
         console.error('Invalid album data');
@@ -103,7 +103,7 @@ function AlbumsPage() {
     <div>
       <Navbar />
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Albums</h1>
+        <h1 className="text-2xl font-bold mb-4">Albumes</h1>
 
         <form className="mb-4" onSubmit={handleSubmit}>
           <input
@@ -115,12 +115,12 @@ function AlbumsPage() {
             className="p-2 border border-gray-300 rounded"
           />
           <button type="submit" className="mt-4 ml-2 p-2 bg-[#5257cd] text-white rounded">
-            Filter
+            Buscar
           </button>
         </form>
 
         <div className="mb-4">
-          <h2 className="text-xl font-bold mb-2">Create New Album</h2>
+          <h2 className="text-xl font-bold mb-2">Crear Nuevo Album</h2>
           <input
             type="text"
             name="title"
@@ -146,7 +146,7 @@ function AlbumsPage() {
             className="p-2 border border-gray-300 rounded mr-2"
           />
           <button onClick={handleCreateAlbum} className="p-2 bg-[#5257cd] text-white rounded">
-            Create Album
+            Crear Album
           </button>
         </div>
 
@@ -158,7 +158,7 @@ function AlbumsPage() {
                 onClick={() => handleDeleteAlbum(album.id)}
                 className="mt-2 p-2 bg-red-500 text-white rounded"
               >
-                Delete Album
+                Eliminar Album
               </button>
             </div>
           ))}

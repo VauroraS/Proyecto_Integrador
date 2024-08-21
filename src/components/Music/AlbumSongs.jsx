@@ -2,21 +2,33 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SongCard from './SongCardAlbum';
 
-// Componente para mostrar las canciones de un álbum
 function AlbumSongs({ albumId }) {
   const [songs, setSongs] = useState([]);
   const [filters, setFilters] = useState({ title: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchSongs();
+    if (albumId) {
+      fetchSongs();
+    }
   }, [albumId, filters]);
 
   const fetchSongs = async () => {
+    if (!albumId) return;
+
+    setLoading(true);
+    setError(null);
+
     try {
-      const response = await axios.get(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${albumId}/songs/`, { params: filters });
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/harmonyhub/albums/${albumId}/songs/`, {
+        params: filters,
+      });
       setSongs(response.data.results || []);
     } catch (error) {
-      console.error('Error fetching songs:', error);
+      setError(error.response ? error.response.data : error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,14 +54,21 @@ function AlbumSongs({ albumId }) {
           className="p-2 border border-gray-300 rounded"
         />
         <button type="submit" className="mt-4 ml-2 p-2 bg-[#5257cd] text-white rounded">
-          Search
+          Buscar
         </button>
       </form>
 
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {songs.map((song) => (
-          <SongCard key={song.id} song={song} />
-        ))}
+        {songs.length > 0 ? (
+          songs.map((song) => (
+            <SongCard key={song.id} song={song} />
+          ))
+        ) : (
+          <p>No songs found</p>
+        )}
       </div>
     </div>
   );
