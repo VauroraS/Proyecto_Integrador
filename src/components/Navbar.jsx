@@ -37,7 +37,6 @@ const Navbar = () => {
             </>
           ) : (
             <span className="text-red-500 text-sm md:text-base lg:text-lg">
-              No tienes acceso
             </span>
           )}
           {user ? (
