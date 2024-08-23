@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Crear el contexto de autenticación
@@ -14,6 +14,17 @@ export const AuthProvider = ({ children }) => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Sincronizar el estado del usuario con el almacenamiento local
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    if (token && userId) {
+      setUser({ token, userId });
+    } else {
+      setUser(null);
+    }
+  }, []); // El array vacío asegura que el efecto solo se ejecute una vez
 
   const login = (token, userId) => {
     console.log('Intentando iniciar sesión con:', { token, userId }); // Debug
@@ -40,6 +51,7 @@ export const AuthProvider = ({ children }) => {
 
 // Hook personalizado para usar el contexto de autenticación
 export const useAuth = () => useContext(AuthContext);
+
 
 
 

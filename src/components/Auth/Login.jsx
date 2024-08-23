@@ -15,6 +15,7 @@ function Login() {
     event.preventDefault();
     if (!isLoading) {
       setIsLoading(true);
+      setIsError(false);
       try {
         const response = await api.post('/api-auth/', {
           username: usernameRef.current.value,
@@ -23,12 +24,18 @@ function Login() {
 
         const responseData = response.data;
         localStorage.setItem('token', responseData.token);
+        
         login(responseData.token);
 
         if (responseData.token) {
-          const profileResponse = await api.get('/users/profiles/profile_data/');
+          
+          const profileResponse = await api.get('/users/profiles/profile_data/', {
+            headers: {
+              'Authorization': `Token ${responseData.token}`
+            }
+          });
           const profileData = profileResponse.data;
-          login(responseData.token, profileData.user__id);
+          login(responseData.token, profileData.userId);
         }
       } catch (error) {
         console.error("Error durante el inicio de sesión:", error);
@@ -93,6 +100,7 @@ function Login() {
 }
 
 export default Login;
+
 
 
 
